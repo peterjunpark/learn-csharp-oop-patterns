@@ -8,12 +8,9 @@ namespace Peter.CookiesCookbook.Recipes
 
         public override string ToString()
         {
-            List<string> steps = [];
-
-            foreach (Ingredient ingredient in Ingredients)
-            {
-                steps.Add($"{ingredient.Name}. {ingredient.PreparationInstructions}");
-            }
+            IEnumerable<string> steps = Ingredients.Select(ingredient =>
+                $"{ingredient.Name}. {ingredient.PreparationInstructions}"
+            );
 
             return string.Join(Environment.NewLine, steps);
         }

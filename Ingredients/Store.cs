@@ -24,14 +24,21 @@ namespace Peter.CookiesCookbook.Ingredients
 
         public Ingredient GetById(int ingredientId)
         {
-            foreach (Ingredient ingredient in All)
+            var allIngredientsWithId = All.Where(ingredient => ingredient.Id = ingredientId);
+
+            if (allIngredientsWithId.Count() > 1)
             {
-                if (ingredient.Id == ingredientId)
-                {
-                    return ingredient;
-                }
+                throw new InvalidOperationException(
+                    $"More than one ingredient with id equal to {ingredientId}"
+                );
             }
-            return null;
+
+            // if (All.Select(ingredient => ingredient.Id).Distinct().Count() != All.Count())
+            // {
+            //     throw new InvalidOperationException($"Some ingredients have duplciate ids.");
+            // }
+
+            return All.FirstOrDefault();
         }
     }
 }

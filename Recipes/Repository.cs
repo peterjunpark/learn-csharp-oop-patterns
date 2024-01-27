@@ -20,49 +20,34 @@ namespace Peter.CookiesCookbook.Recipes
 
         public Recipe RecipeFromString(string recipeFromFile)
         {
-            string[] textualIds = recipeFromFile.Split(Separator);
-            List<Ingredient> ingredients = [];
-
-            foreach (string textualId in textualIds)
-            {
-                int id = int.Parse(textualId);
-                Ingredient ingredient = _ingredientsStore.GetById(id);
-                ingredients.Add(ingredient);
-            }
+            IEnumerable<Ingredient> ingredients = recipeFromFile
+                .Split(Separator)
+                .Select(int.Parse)
+                .Select(_ingredientsStore.GetById);
 
             return new Recipe(ingredients);
         }
 
         public List<Recipe> Read(string filePath)
         {
-            List<string> recipesFromFile = _stringsRepository.Read(filePath);
-            List<Recipe> recipes = [];
-
-            foreach (string recipeFromFile in recipesFromFile)
-            {
-                Recipe recipe = RecipeFromString(recipeFromFile);
-                recipes.Add(recipe);
-            }
-
-            return recipes;
+            return _stringsRepository.Read(filePath).Select(RecipeFromString).ToList();
         }
 
         public void Write(string filePath, List<Recipe> allRecipes)
         {
-            List<string> recipesAsStrings = [];
-
-            foreach (Recipe recipe in allRecipes)
+            IEnumerable<string> recipesAsStrings = allRecipes.Select(recipe =>
             {
-                List<int> ingredientIds = [];
-                foreach (Ingredient ingredient in recipe.Ingredients)
-                {
-                    ingredientIds.Add(ingredient.Id);
-                }
+                IEnumerable<int> ingredientIds = recipe.Ingredients.Select(ingredient =>
+                    ingredient.Id
+                );
 
-                recipesAsStrings.Add(string.Join(Separator, ingredientIds));
-            }
+                return string.Join(
+                    Separator,
+                    recipe.Ingredients.Select(ingredient => ingredient.Id)
+                );
+            });
 
-            _stringsRepository.Write(filePath, recipesAsStrings);
+            _stringsRepository.Write(filePath, recipesAsStrings.ToList());
         }
     }
 }

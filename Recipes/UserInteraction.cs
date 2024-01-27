@@ -34,24 +34,18 @@ namespace Peter.CookiesCookbook.Recipes
                 return;
             }
 
-            int counter = 1;
+            IEnumerable<string> allRecipesAsStrings = allRecipes.Select(
+                (recipe, index) => $"**{index + 1}**{Environment.NewLine}{recipe}"
+            );
             Console.WriteLine("Existing recipes:" + Environment.NewLine);
-            foreach (Recipe recipe in allRecipes)
-            {
-                Console.WriteLine($" * {counter}");
-                Console.WriteLine(recipe);
-                counter++;
-            }
+            Console.WriteLine(string.Join(Environment.NewLine, allRecipesAsStrings));
+            Console.WriteLine();
         }
 
         public void PromptToCreateRecipe()
         {
             Console.WriteLine("Create a new cookie recipe.\nAvailable ingredients are:");
-
-            foreach (Ingredient ingredient in _ingredientsStore.All)
-            {
-                Console.WriteLine(ingredient);
-            }
+            Console.WriteLine(string.Join(Environment.NewLine, _ingredientsStore.All));
         }
 
         public IEnumerable<Ingredient> ReadIngredientsFromUser()
